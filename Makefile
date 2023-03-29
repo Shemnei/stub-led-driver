@@ -22,7 +22,7 @@ ${BUILD_DIR}:
 clean:
 	rm -r ${BUILD_DIR}
 
-run: ${BUILD_DIR}/main_s
+test: ${BUILD_DIR}/main_s
 	./${BUILD_DIR}/main_s
 
 check:
@@ -42,7 +42,7 @@ doc:
 
 set_target:
 	# Only redefine variable if not already defined
-	$(if $(TARGET_MC),, $(eval TARGET_MC=$(shell ./get-target-board-controller.sh)))
+	$(if $(TARGET_MC), , $(eval TARGET_MC=$(shell ./get-target-board-controller.sh)))
 
 # BUILD Shared Library
 
