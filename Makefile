@@ -1,4 +1,5 @@
-.PHONY: default all build build-lib build-bin clean run lint valgrind doc set_target
+.PHONY: default all build build-lib build-lib-dynamic build-lib-static build-bin
+.PHONY: clean run lint valgrind doc set_target
 
 # Use expanded (:=) instead of recursive (=) variable definitions to only have to
 # "build" them once.
@@ -12,7 +13,10 @@ all: build
 
 build: build-lib build-bin
 
-build-lib: ${BUILD_DIR}/libled.so ${BUILD_DIR}/libled.a
+build-lib: build-lib-dynamic build-lib-static
+
+build-lib-dynamic: ${BUILD_DIR}/libled.so
+build-lib-static: ${BUILD_DIR}/libled.a
 
 build-bin: ${BUILD_DIR}/main_s ${BUILD_DIR}/main_d
 
