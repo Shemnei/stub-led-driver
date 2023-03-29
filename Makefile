@@ -29,7 +29,7 @@ clean:
 test: ${BUILD_DIR}/main_s
 	./${BUILD_DIR}/main_s
 
-check:
+check: set-target
 	$(CC) $(CFLAGS) -fsyntax-only src/*.c
 
 valgrind: ${BUILD_DIR}/main_s
