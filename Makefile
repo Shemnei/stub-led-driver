@@ -1,5 +1,5 @@
 .PHONY: default all build build-lib build-lib-dynamic build-lib-static build-bin
-.PHONY: clean run lint valgrind doc set_target
+.PHONY: clean run lint valgrind doc set-target
 
 # Use expanded (:=) instead of recursive (=) variable definitions to only have to
 # "build" them once.
@@ -44,41 +44,41 @@ valgrind: ${BUILD_DIR}/main_s
 doc:
 	doxygen .doxygen
 
-set_target:
+set-target:
 	# Only redefine variable if not already defined
 	$(if $(TARGET_MC), , $(eval TARGET_MC=$(shell ./get-target-board-controller.sh)))
 
 # BUILD Shared Library
 
 # PIC = Position idependent code
-${BUILD_DIR}/registers.pic.o: set_target ${BUILD_DIR} src/registers.c
+${BUILD_DIR}/registers.pic.o: set-target ${BUILD_DIR} src/registers.c
 	$(CC) $(CFLAGS) -fPIC -c -o ${BUILD_DIR}/registers.pic.o src/registers.c
 
-${BUILD_DIR}/led.pic.o: set_target ${BUILD_DIR} src/led.c
+${BUILD_DIR}/led.pic.o: set-target ${BUILD_DIR} src/led.c
 	$(CC) $(CFLAGS) -fPIC -c -o ${BUILD_DIR}/led.pic.o src/led.c
 
-${BUILD_DIR}/msg.pic.o: set_target ${BUILD_DIR} src/msg.c
+${BUILD_DIR}/msg.pic.o: set-target ${BUILD_DIR} src/msg.c
 	$(CC) $(CFLAGS) -fPIC -c -o ${BUILD_DIR}/msg.pic.o src/msg.c
 
-${BUILD_DIR}/libled.so: set_target ${BUILD_DIR} ${BUILD_DIR}/registers.pic.o ${BUILD_DIR}/led.pic.o ${BUILD_DIR}/msg.pic.o
+${BUILD_DIR}/libled.so: set-target ${BUILD_DIR} ${BUILD_DIR}/registers.pic.o ${BUILD_DIR}/led.pic.o ${BUILD_DIR}/msg.pic.o
 	$(CC) $(CFLAGS) -shared -o ${BUILD_DIR}/libled.so ${BUILD_DIR}/registers.pic.o ${BUILD_DIR}/led.pic.o ${BUILD_DIR}/msg.pic.o
 
 # BUILD Static Library
-${BUILD_DIR}/registers.stat.o: set_target ${BUILD_DIR} src/registers.c
+${BUILD_DIR}/registers.stat.o: set-target ${BUILD_DIR} src/registers.c
 	$(CC) $(CFLAGS) -c -o ${BUILD_DIR}/registers.stat.o src/registers.c
 
-${BUILD_DIR}/led.stat.o: set_target ${BUILD_DIR} src/led.c
+${BUILD_DIR}/led.stat.o: set-target ${BUILD_DIR} src/led.c
 	$(CC) $(CFLAGS) -c -o ${BUILD_DIR}/led.stat.o src/led.c
 
-${BUILD_DIR}/msg.stat.o: set_target ${BUILD_DIR} src/msg.c
+${BUILD_DIR}/msg.stat.o: set-target ${BUILD_DIR} src/msg.c
 	$(CC) $(CFLAGS) -c -o ${BUILD_DIR}/msg.stat.o src/msg.c
 
-${BUILD_DIR}/libled.a: set_target ${BUILD_DIR} ${BUILD_DIR}/registers.stat.o ${BUILD_DIR}/led.stat.o ${BUILD_DIR}/msg.stat.o
+${BUILD_DIR}/libled.a: set-target ${BUILD_DIR} ${BUILD_DIR}/registers.stat.o ${BUILD_DIR}/led.stat.o ${BUILD_DIR}/msg.stat.o
 	ar -rcs ${BUILD_DIR}/libled.a ${BUILD_DIR}/registers.stat.o ${BUILD_DIR}/led.stat.o ${BUILD_DIR}/msg.stat.o
 
 # BUILD main with static lib
-${BUILD_DIR}/main_d: set_target ${BUILD_DIR} ${BUILD_DIR}/libled.so src/main.c
+${BUILD_DIR}/main_d: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.so src/main.c
 	$(CC) $(CFLAGS) -Wl,-rpath,. -o ${BUILD_DIR}/main_d src/main.c -L${BUILD_DIR} -lled
 
-${BUILD_DIR}/main_s: set_target ${BUILD_DIR} ${BUILD_DIR}/libled.a src/main.c
+${BUILD_DIR}/main_s: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.a src/main.c
 	$(CC) $(CFLAGS) -o ${BUILD_DIR}/main_s src/main.c -static -L${BUILD_DIR} -lled
