@@ -23,3 +23,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: make check
         run: make check
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: make test
+        run: make test
