@@ -1,0 +1,24 @@
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'Makefile'
+      - 'get-target-board-controller.sh'
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'Makefile'
+      - 'get-target-board-controller.sh'
+
+name: CI
+
+jobs:
+  lints:
+    name: Lints
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: make check
+        run: make check
