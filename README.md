@@ -18,7 +18,7 @@ Most build files produces by `make` will be located in the `out` directory.
 
 To build a library (`libled.a`) for static linking, run:
 
-```
+```sh
 make build-lib-static
 ```
 
@@ -26,7 +26,7 @@ make build-lib-static
 
 To build a library (`libled.so`) for dynamic linking, run:
 
-```
+```sh
 make build-lib-dynamic
 ```
 
@@ -35,7 +35,7 @@ make build-lib-dynamic
 Some basic "tests" are located in [`src/main.c`](src/main.c).
 If a test fails, the expected and current result are printed to standard out.
 
-```
+```sh
 make test
 ```
 
@@ -54,7 +54,7 @@ make doc
 
 Does code checking without building anything.
 
-```
+```sh
 make check
 ```
 
@@ -62,6 +62,6 @@ make check
 
 Checks the test suit for any memory leaks.
 
-```
+```sh
 make valgrind
 ```
