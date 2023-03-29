@@ -47,3 +47,21 @@ To build it run:
 ```sh
 make doc
 ```
+
+## Other commands
+
+### Check
+
+Does code checking without building anything.
+
+```
+make check
+```
+
+### Valgrind
+
+Checks the test suit for any memory leaks.
+
+```
+make valgrind
+```
