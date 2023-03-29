@@ -1,4 +1,4 @@
-.PHONY: default all build build-lib build-lib-dynamic build-lib-static build-bin
+.PHONY: default all build build-lib build-lib-dynamic build-lib-static build-tests
 .PHONY: clean run lint valgrind doc set-target
 
 # Use expanded (:=) instead of recursive (=) variable definitions to only have to
@@ -11,14 +11,14 @@ default: all
 
 all: build
 
-build: build-lib build-bin
+build: build-lib build-tests
 
 build-lib: build-lib-dynamic build-lib-static
 
 build-lib-dynamic: ${BUILD_DIR}/libled.so
 build-lib-static: ${BUILD_DIR}/libled.a
 
-build-bin: ${BUILD_DIR}/main_s ${BUILD_DIR}/main_d
+build-tests: ${BUILD_DIR}/tests_s ${BUILD_DIR}/tests_d
 
 ${BUILD_DIR}:
 	mkdir -p ${BUILD_DIR}
@@ -26,20 +26,20 @@ ${BUILD_DIR}:
 clean:
 	rm -r ${BUILD_DIR}
 
-test: ${BUILD_DIR}/main_s
-	./${BUILD_DIR}/main_s
+test: ${BUILD_DIR}/tests_s
+	./${BUILD_DIR}/tests_s
 
 check: set-target
 	$(CC) $(CFLAGS) -fsyntax-only src/*.c
 
-valgrind: ${BUILD_DIR}/main_s
+valgrind: ${BUILD_DIR}/tests_s
 	valgrind \
 		--tool=memcheck \
 		--leak-check=yes \
 		--show-reachable=yes \
 		--num-callers=20 \
 		--track-fds=yes \
-		${BUILD_DIR}/main_s
+		${BUILD_DIR}/tests_s
 
 doc:
 	doxygen .doxygen
@@ -76,9 +76,9 @@ ${BUILD_DIR}/msg.stat.o: set-target ${BUILD_DIR} src/msg.c
 ${BUILD_DIR}/libled.a: set-target ${BUILD_DIR} ${BUILD_DIR}/registers.stat.o ${BUILD_DIR}/led.stat.o ${BUILD_DIR}/msg.stat.o
 	ar -rcs ${BUILD_DIR}/libled.a ${BUILD_DIR}/registers.stat.o ${BUILD_DIR}/led.stat.o ${BUILD_DIR}/msg.stat.o
 
-# BUILD main with static lib
-${BUILD_DIR}/main_d: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.so src/main.c
-	$(CC) $(CFLAGS) -Wl,-rpath,. -o ${BUILD_DIR}/main_d src/main.c -L${BUILD_DIR} -lled
+# BUILD tests with static lib
+${BUILD_DIR}/tests_d: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.so src/tests.c
+	$(CC) $(CFLAGS) -Wl,-rpath,. -o ${BUILD_DIR}/tests_d src/tests.c -L${BUILD_DIR} -lled
 
-${BUILD_DIR}/main_s: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.a src/main.c
-	$(CC) $(CFLAGS) -o ${BUILD_DIR}/main_s src/main.c -static -L${BUILD_DIR} -lled
+${BUILD_DIR}/tests_s: set-target ${BUILD_DIR} ${BUILD_DIR}/libled.a src/tests.c
+	$(CC) $(CFLAGS) -o ${BUILD_DIR}/tests_s src/tests.c -static -L${BUILD_DIR} -lled

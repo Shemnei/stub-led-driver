@@ -32,7 +32,7 @@ make build-lib-dynamic
 
 ### Tests
 
-Some basic "tests" are located in [`src/main.c`](src/main.c).
+Some basic "tests" are located in [`src/tests.c`](src/tests.c).
 If a test fails, the expected and current result are printed to standard out.
 
 ```sh
