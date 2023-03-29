@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "led.h"
 #include "msg.h"
@@ -51,7 +52,7 @@ void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 			print_bits(is);
 			printf("\n\tShould: 0b%04d_%04d\n", (should / 10000), should % 10000);
 
-			return;
+			exit(1);
 		}
 
 		number_div *= 10;
@@ -152,6 +153,7 @@ void assert_msg_process(int process_result, int expected, char * message) {
 		printf("\n\tShould: ");
 		print_process_error(expected);
 		printf("\n");
+		exit(1);
 	}
 }
 
