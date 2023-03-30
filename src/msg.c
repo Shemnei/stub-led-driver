@@ -12,7 +12,7 @@
 ///
 /// @param len The total length of the received message.
 ///
-/// @return Returns `0` if the message was processed successfully, otherwise a variant of MsgErrorCode will be returned.
+/// @return Returns `0` if the message was processed successfully, otherwise a variant of #MsgErrorCode will be returned.
 int process_op_on(uint8_t len) {
 	if (len != 1) {
 		return MSG_ERROR_CODE_TRAILING_BYTES;
@@ -27,7 +27,7 @@ int process_op_on(uint8_t len) {
 ///
 /// @param len The total length of the received message.
 ///
-/// @return Returns `0` if the message was processed successfully, otherwise a variant of MsgErrorCode will be returned.
+/// @return Returns `0` if the message was processed successfully, otherwise a variant of #MsgErrorCode will be returned.
 int process_op_off(uint8_t len) {
 	if (len != 1) {
 		return MSG_ERROR_CODE_TRAILING_BYTES;
@@ -43,7 +43,7 @@ int process_op_off(uint8_t len) {
 /// @param len The total length of the received message.
 /// @param buffer The complete message
 ///
-/// @return Returns `0` if the message was processed successfully, otherwise a variant of MsgErrorCode will be returned.
+/// @return Returns `0` if the message was processed successfully, otherwise a variant of #MsgErrorCode will be returned.
 int process_op_led_settings(uint8_t len, uint8_t* buffer) {
 	if (len < 3) {
 		return MSG_ERROR_CODE_MISSING_PARAMETERS;

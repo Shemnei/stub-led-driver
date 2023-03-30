@@ -44,7 +44,7 @@ typedef enum {
 /// @param bufferLength The length of the message in buffer.
 /// @param buffer The buffer which holds the messages to be processed.
 ///
-/// @return Returns `0` if the message was processed successfully, otherwise a variant of MsgErrorCode will be returned.
+/// @return Returns `0` if the message was processed successfully, otherwise a variant of #MsgErrorCode will be returned.
 int process_message(uint8_t bufferLength, uint8_t* buffer);
 
 #endif
