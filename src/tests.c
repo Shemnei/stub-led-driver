@@ -126,7 +126,7 @@ int test_led() {
 	status |= assert_led_bits(110, "Colors on red|green");
 
 	led_color_set(LED_COLOR_RED | LED_COLOR_GREEN | LED_COLOR_BLUE);
-	status |= assert_led_bits(110, "Colors on red|green|blue");
+	status |= assert_led_bits(1110, "Colors on red|green|blue");
 
 	// Clear color
 	led_color_set(0x0);
@@ -151,7 +151,7 @@ int test_led() {
 	status |= assert_led_bits(11110110, "Max brightness");
 
 	led_brightness_set(0xa);
-	status |= assert_led_bits(1000110, "10 brightness");
+	status |= assert_led_bits(10100110, "10 brightness");
 
 	led_brightness_min();
 	status |= assert_led_bits(110, "Min brightness 2");
@@ -240,18 +240,18 @@ int test_msg() {
 	// Sends on
 	msg_buf[0] = 0x00;
 	status |= assert_msg_process(process_message(1, msg_buf), 0, "Send on");
-	status |= assert_led_bits(0, "msg: On");
+	status |= assert_led_bits(1, "msg: On");
 
 	// Sends off
 	msg_buf[0] = 0x01;
-	status |= assert_msg_process(process_message(1, msg_buf), 10, "Send off");
+	status |= assert_msg_process(process_message(1, msg_buf), 0, "Send off");
 	status |= assert_led_bits(0, "msg: On");
 
 	// Sends configuration
 	msg_buf[0] = 0x02;
 	msg_buf[1] = LED_COLOR_GREEN; // color
 	msg_buf[2] = 0x5; // brightness
-	status |= assert_msg_process(process_message(3, msg_buf), 1, "Send config");
+	status |= assert_msg_process(process_message(3, msg_buf), 0, "Send config");
 	status |= assert_led_bits(1010100, "msg: Config");
 
 	// Turn on & send configuration
