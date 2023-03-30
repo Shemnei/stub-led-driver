@@ -21,14 +21,14 @@
 
 /// Bit offset of the color section
 #define LED_COLOR_OFFSET     0x1 // 1
-/// Bit mask of the color value (apply to contrain the value to valid values)
+/// Bit mask of the color value (apply to constrain the value to valid values)
 #define LED_COLOR_VALUE_MASK 0x7 // 7 / 0b111
 /// Bit mask for the color section
 #define LED_COLOR_MASK       LED_COLOR_VALUE_MASK << LED_COLOR_OFFSET // 0b0000_1110
 
 /// Bit offset of the brightness section
 #define LED_BRIGHTNESS_OFFSET     0x4 // 4
-/// Bit mask of the brightness value (apply to contrain the value to valid values)
+/// Bit mask of the brightness value (apply to constrain the value to valid values)
 #define LED_BRIGHTNESS_VALUE_MASK 0xf // 15 / 0b1111
 /// Bit mask for the brightness section
 #define LED_BRIGHTNESS_MASK       LED_BRIGHTNESS_VALUE_MASK << LED_BRIGHTNESS_OFFSET // 0b1111_0000
@@ -48,7 +48,7 @@ typedef enum {
 /// All allowed colors.
 ///
 /// # NOTE
-/// Values can be combined by `or'ing` them:
+/// Values can be combined by `or`ing them:
 ///
 /// ```c
 /// int color = LED_COLOR_RED | LED_COLOR_GREEN;
@@ -66,7 +66,7 @@ typedef enum {
 /// This functions should be called before any other function from this unit.
 void led_init(void);
 
-/// Clears all relevatn bits from the led.
+/// Clears all relevant bits from the led.
 void led_clear(void);
 
 /// Sets the state of the led.
