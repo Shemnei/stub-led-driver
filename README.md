@@ -8,7 +8,8 @@ A simple led driver for a imaginary microcontroller written in `C`.
 - [`make`](https://www.gnu.org/software/make/) (v4.4.1)
 - [`ar`](https://en.wikipedia.org/wiki/Ar_(Unix)) (part of `binutils`; for static library builds)
 - [`valgrind`](https://valgrind.org/) (v3.20.0; for memory leak checks)
-- [`doxygen`]() (v; for document generation)
+- [`doxygen`](https://www.doxygen.nl/) (v1.9.6; for document generation)
+- [`watchexec`](https://github.com/watchexec/watchexec) (v1.22.0; for continuously building the documentation on change)
 
 ## Build
 
@@ -49,6 +50,14 @@ make doc
 ```
 
 ## Other commands
+
+### Watch
+
+Watches for changes and re-builds the documentation on change.
+
+```sh
+make watch
+```
 
 ### Check
 
