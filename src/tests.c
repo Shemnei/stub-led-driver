@@ -1,3 +1,7 @@
+//! \file tests.c
+//!
+//! A small collection of tests to test the functionality of the led/msg libraries.
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +12,20 @@
 
 #define UINT8_T_BITS sizeof(uint8_t) * 8
 
+/// Pretty prints the bits of a `uint8_t`.
+///
+/// @param value The value to pretty print the bits of.
+///
+/// # NOTE
+/// No newline character will be printed by this function.
+/// See println_bits() instead.
+///
+/// # Example
+///
+/// ```c
+/// print_bits(0x11);
+/// // => 0b0001_0001
+/// ```
 void print_bits(uint8_t value) {
 	printf("0b");
 	for (size_t i = 0; i < UINT8_T_BITS; i++) {
@@ -19,11 +37,29 @@ void print_bits(uint8_t value) {
 	}
 }
 
+/// Pretty prints the bits of value. Also appends a newline at then end.
+///
+/// Also see print_bits().
 void println_bits(uint8_t value) {
 	print_bits(value);
 	printf("\n");
 }
 
+/// Checks if the bits of `is` are equal to the bits in decimal notation of `should`.
+/// If not `message` will be printed and the program will be exited.
+///
+/// @param is The value to check.
+/// @param should The value which is expected in binary format (e.g. `1110101`).
+/// @param message Optional message to print if the assertion fails.
+///
+/// # NOTE
+/// The value in should is the decimal representation of a binary number (e.g. `110111`).
+/// This is done, because cstd11 does not binary number representations.
+///
+/// # Example
+/// ```c
+/// assert_bits_eq(5, 1001, "Not equal");
+/// ```
 void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 	size_t number_div = 1;
 
@@ -35,9 +71,6 @@ void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 		} else {
 			should_bit = (should % 10);
 		}
-
-		//printf("Is         : %d\n", is_bit);
-		//printf("Should(%ld): %d\n", i, should_bit);
 
 		if (is_bit != should_bit) {
 			printf("assert failed: ");
@@ -59,11 +92,13 @@ void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 	}
 }
 
+/// Same as assert_bits_eq() but with the `is` parameter always set to the led register.
 void assert_led_bits(uint32_t bits, char * message) {
 	assert_bits_eq(LED, bits, message);
 }
 
 // NOTE: Do not change the order of the test cases, they build up on each other.
+/// Unit/Integration tests for the led interface (led.h / led.c).
 void test_led() {
 	printf("Running led interface tests\n");
 
@@ -118,6 +153,9 @@ void test_led() {
 	assert_led_bits(11110110, "Max brightness 2");
 }
 
+/// Converts the numeric error representation of #MsgErrorCode to a string for printing.
+///
+/// @param process_result The value returned by process_message().
 void print_process_error(int process_result) {
 	switch (process_result) {
 		case 0:
@@ -138,6 +176,12 @@ void print_process_error(int process_result) {
 	}
 }
 
+/// Checks that the result of process_message() is as expected.
+/// If not the program exists and the given `message` is printed.
+///
+/// @param process_result The result of the function call process_message().
+/// @param expected The expected result of the function call.
+/// @param message The message to be printed on failure.
 void assert_msg_process(int process_result, int expected, char * message) {
 	if (process_result != expected) {
 		printf("msg_assert failed: ");
@@ -158,6 +202,7 @@ void assert_msg_process(int process_result, int expected, char * message) {
 }
 
 // NOTE: Do not change the order of the test cases, they build up on each other.
+/// Unit/Integration tests for the message processing interface (msg.h / msg.c).
 void test_msg() {
 	printf("Running msg process tests\n");
 

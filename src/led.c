@@ -1,4 +1,7 @@
-/// @file led.c
+//! \file led.c
+//! Implementation for the led interface.
+//!
+//! See led.h for the available functions and documentation.
 
 #include <stdint.h>
 
@@ -9,7 +12,7 @@
  * Utilities
  */
 
-// Mask with 1 at the locations which to copy
+///
 uint8_t set_bits(uint8_t lhs, uint8_t rhs, uint8_t mask) {
 	// First clear needed bits, then set them according to state.
 	return (lhs & ~mask) | (rhs & mask);
@@ -31,8 +34,6 @@ void led_init(void) {
  * STATE
  */
 
-/// Set the state of the led.
-/// @param state The new state.
 void led_state_set(LedState state) {
 	// Keep in valid/expected bounds
 	uint8_t safe_state = state & LED_STATE_MASK;

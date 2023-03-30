@@ -44,6 +44,9 @@ valgrind: ${BUILD_DIR}/tests_s
 doc:
 	doxygen .doxygen
 
+watch:
+	watchexec -w src -w .doxygen make doc
+
 set-target:
 	# Only redefine variable if not already defined
 	$(if $(TARGET_MC), , $(eval TARGET_MC=$(shell ./get-target-board-controller.sh)))
