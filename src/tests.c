@@ -51,7 +51,7 @@ void println_bits(uint8_t value) {
 }
 
 /// Checks if the bits of `is` are equal to the bits in decimal notation of `should`.
-/// If not `message` will be printed and the program will be exited.
+/// If not `message` will be printed and `1` returned.
 ///
 /// @param is The value to check.
 /// @param should The value which is expected in binary format (e.g. `1110101`).
@@ -59,6 +59,8 @@ void println_bits(uint8_t value) {
 /// @param file The file in which the assertion is located (filled in by the assert_led_bits macro)
 /// @param func The func in which the assertion is located (filled in by the assert_led_bits macro)
 /// @param line The line which the assertion is located on (filled in by the assert_led_bits macro)
+///
+/// @return `0` if every test succeeded, `1` otherwise.
 ///
 /// # NOTE
 /// The value in should is the decimal representation of a binary number (e.g. `110111`).
@@ -68,7 +70,7 @@ void println_bits(uint8_t value) {
 /// ```c
 /// assert_bits_eq(5, 1001, "Not equal");
 /// ```
-void assert_bits_eq(uint8_t is, uint32_t should, const char* message, const char* file, const char* func, unsigned int line) {
+int assert_bits_eq(uint8_t is, uint32_t should, const char* message, const char* file, const char* func, unsigned int line) {
 	size_t number_div = 1;
 
 	for (size_t i = 0; i < UINT8_T_BITS; i++) {
@@ -93,67 +95,74 @@ void assert_bits_eq(uint8_t is, uint32_t should, const char* message, const char
 			print_bits(is);
 			printf("\n\tShould: 0b%04d_%04d\n", (should / 10000), should % 10000);
 
-			exit(1);
+			return 1;
 		}
 
 		number_div *= 10;
 	}
+
+	return 0;
 }
 
 // NOTE: Do not change the order of the test cases, they build up on each other.
 /// Unit/Integration tests for the led interface (led.h / led.c).
-void test_led() {
+/// @return `0` if every test succeeded, `1` otherwise.
+int test_led() {
 	printf("Running led interface tests\n");
+
+	int status = 0;
 
 	// Prepare led
 	led_init();
-	assert_led_bits(0, "Init");
+	status |= assert_led_bits(0, "Init");
 
 	led_state_set(LED_STATE_ON);
-	assert_led_bits(1, "State on");
+	status |= assert_led_bits(1, "State on");
 
 	led_state_set(LED_STATE_OFF);
-	assert_led_bits(0, "State off");
+	status |= assert_led_bits(0, "State off");
 
 	led_color_set(LED_COLOR_RED | LED_COLOR_GREEN);
-	assert_led_bits(110, "Colors on red|green");
+	status |= assert_led_bits(110, "Colors on red|green");
 
 	led_color_set(LED_COLOR_RED | LED_COLOR_GREEN | LED_COLOR_BLUE);
-	assert_led_bits(1110, "Colors on red|green|blue");
+	status |= assert_led_bits(1110, "Colors on red|green|blue");
 
 	// Clear color
 	led_color_set(0x0);
-	assert_led_bits(0, "Colors off");
+	status |= assert_led_bits(0, "Colors off");
 
 	led_color_red();
-	assert_led_bits(10, "Colors on red");
+	status |= assert_led_bits(10, "Colors on red");
 
 	led_color_green();
-	assert_led_bits(100, "Colors on green");
+	status |= assert_led_bits(100, "Colors on green");
 
 	led_color_blue();
-	assert_led_bits(1000, "Colors on blue");
+	status |= assert_led_bits(1000, "Colors on blue");
 
 	led_color_set(LED_COLOR_RED | LED_COLOR_GREEN);
-	assert_led_bits(110, "Colors on red|green (2)");
+	status |= assert_led_bits(110, "Colors on red|green (2)");
 
 	led_brightness_set(LED_BRIGHTNESS_MIN);
-	assert_led_bits(110, "Min brightness");
+	status |= assert_led_bits(110, "Min brightness");
 
 	led_brightness_set(LED_BRIGHTNESS_MAX);
-	assert_led_bits(11110110, "Max brightness");
+	status |= assert_led_bits(11110110, "Max brightness");
 
 	led_brightness_set(0xa);
-	assert_led_bits(10100110, "10 brightness");
+	status |= assert_led_bits(10100110, "10 brightness");
 
 	led_brightness_min();
-	assert_led_bits(110, "Min brightness 2");
+	status |= assert_led_bits(110, "Min brightness 2");
 
 	led_brightness_set(0x5);
-	assert_led_bits(1010110, "5 brightness");
+	status |= assert_led_bits(1010110, "5 brightness");
 
 	led_brightness_max();
-	assert_led_bits(11110110, "Max brightness 2");
+	status |= assert_led_bits(11110110, "Max brightness 2");
+
+	return status;
 }
 
 /// Converts the numeric error representation of #MsgErrorCode to a string for printing.
@@ -188,7 +197,9 @@ void print_process_error(int process_result) {
 /// @param file The file in which the assertion is located (filled in by the assert_msg_process macro)
 /// @param func The func in which the assertion is located (filled in by the assert_msg_process macro)
 /// @param line The line which the assertion is located on (filled in by the assert_msg_process macro)
-void assert_msg_process_full(int process_result, int expected, const char* message, const char* file, const char* func, unsigned int line) {
+///
+/// @return `0` if every test succeeded, `1` otherwise.
+int assert_msg_process_full(int process_result, int expected, const char* message, const char* file, const char* func, unsigned int line) {
 	if (process_result != expected) {
 		printf("%s:%u <%s> Assert failed: ", file, line, func);
 
@@ -203,86 +214,95 @@ void assert_msg_process_full(int process_result, int expected, const char* messa
 		printf("\n\tShould: ");
 		print_process_error(expected);
 		printf("\n");
-		exit(1);
+
+		return 1;
 	}
+
+	return 0;
 }
 
 // NOTE: Do not change the order of the test cases, they build up on each other.
 /// Unit/Integration tests for the message processing interface (msg.h / msg.c).
-void test_msg() {
+///
+/// @return `0` if every test succeeded, `1` otherwise.
+int test_msg() {
 	printf("Running msg process tests\n");
+
+	int status = 0;
 
 	// Reset to have a known start state
 	led_clear();
-	assert_led_bits(0, "msg: Clear");
+	status |= assert_led_bits(0, "msg: Clear");
 
 	// Create buffer with enough space to test everything
 	uint8_t msg_buf[10];
 
 	// Sends on
 	msg_buf[0] = 0x00;
-	assert_msg_process(process_message(1, msg_buf), 0, "Send on");
-	assert_led_bits(1, "msg: On");
+	status |= assert_msg_process(process_message(1, msg_buf), 0, "Send on");
+	status |= assert_led_bits(1, "msg: On");
 
 	// Sends off
 	msg_buf[0] = 0x01;
-	assert_msg_process(process_message(1, msg_buf), 0, "Send off");
-	assert_led_bits(0, "msg: On");
+	status |= assert_msg_process(process_message(1, msg_buf), 0, "Send off");
+	status |= assert_led_bits(0, "msg: On");
 
 	// Sends configuration
 	msg_buf[0] = 0x02;
 	msg_buf[1] = LED_COLOR_GREEN; // color
 	msg_buf[2] = 0x5; // brightness
-	assert_msg_process(process_message(3, msg_buf), 0, "Send config");
-	assert_led_bits(1010100, "msg: Config");
+	status |= assert_msg_process(process_message(3, msg_buf), 0, "Send config");
+	status |= assert_led_bits(1010100, "msg: Config");
 
 	// Turn on & send configuration
 	led_clear();
 	msg_buf[0] = 0x00;
-	assert_msg_process(process_message(1, msg_buf), 0, "Send on (2)");
-	assert_led_bits(1, "msg: On (2)");
+	status |= assert_msg_process(process_message(1, msg_buf), 0, "Send on (2)");
+	status |= assert_led_bits(1, "msg: On (2)");
 	msg_buf[0] = 0x02;
 	msg_buf[1] = LED_COLOR_RED; // color
 	msg_buf[2] = LED_BRIGHTNESS_MAX; // brightness
-	assert_msg_process(process_message(3, msg_buf), 0, "Send config (2)");
-	assert_led_bits(11110011, "msg: Config (2)");
+	status |= assert_msg_process(process_message(3, msg_buf), 0, "Send config (2)");
+	status |= assert_led_bits(11110011, "msg: Config (2)");
 
 	// ERROR - Invalid op code
 	msg_buf[0] = 0x05;
-	assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_INVALID_OP_CODE, "Invalid op code");
+	status |= assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_INVALID_OP_CODE, "Invalid op code");
 
 	// ERROR - Invalid op code
 	msg_buf[0] = 0xff;
-	assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_INVALID_OP_CODE, "Invalid op code (2)");
+	status |= assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_INVALID_OP_CODE, "Invalid op code (2)");
 
 	// ERROR - Empty
-	assert_msg_process(process_message(0, msg_buf), MSG_ERROR_CODE_EMPTY, "Empty");
+	status |= assert_msg_process(process_message(0, msg_buf), MSG_ERROR_CODE_EMPTY, "Empty");
 
 	// ERROR - Trailing bytes (on)
 	msg_buf[0] = 0x00;
 	msg_buf[1] = 0x00;
-	assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (on)");
+	status |= assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (on)");
 
 	// ERROR - Trailing bytes (off)
 	msg_buf[0] = 0x01;
 	msg_buf[1] = 0x00;
-	assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (off)");
+	status |= assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (off)");
 
 	// ERROR - Trailing bytes (settings)
 	msg_buf[0] = 0x02;
 	msg_buf[1] = 0x00;
 	msg_buf[2] = 0x00;
 	msg_buf[3] = 0x00;
-	assert_msg_process(process_message(4, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (settings)");
+	status |= assert_msg_process(process_message(4, msg_buf), MSG_ERROR_CODE_TRAILING_BYTES, "Trailing bytes (settings)");
 
 	// ERROR - Missing parameters (1)
 	msg_buf[0] = 0x02;
-	assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_MISSING_PARAMETERS, "Missing parameters (settings/1)");
+	status |= assert_msg_process(process_message(1, msg_buf), MSG_ERROR_CODE_MISSING_PARAMETERS, "Missing parameters (settings/1)");
 
 	// ERROR - Missing parameters (2)
 	msg_buf[0] = 0x02;
 	msg_buf[1] = 0x00;
-	assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_MISSING_PARAMETERS, "Missing parameters (settings/2)");
+	status |= assert_msg_process(process_message(2, msg_buf), MSG_ERROR_CODE_MISSING_PARAMETERS, "Missing parameters (settings/2)");
+
+	return status;
 }
 
 #if defined STM32F767ZI
@@ -295,6 +315,11 @@ void test_msg() {
 
 int main(void) {
 	printf("Led count for target mc: %d\n", _LED_COUNT);
-	test_led();
-	test_msg();
+
+	int status = 0;
+
+	status |= test_led();
+	status |= test_msg();
+
+	return status;
 }
