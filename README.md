@@ -1,3 +1,6 @@
+[![CI](https://github.com/Shemnei/stub-led-driver/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/Shemnei/stub-led-driver/actions/workflows/ci.yaml)
+[![Documentation](https://github.com/Shemnei/stub-led-driver/actions/workflows/doxygen.yaml/badge.svg)](https://github.com/Shemnei/stub-led-driver/actions/workflows/doxygen.yaml)
+
 # stub-led-driver
 
 A simple led driver for a imaginary microcontroller written in `C`.
