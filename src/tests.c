@@ -12,6 +12,11 @@
 
 #define UINT8_T_BITS sizeof(uint8_t) * 8
 
+/// Calls assert_bits_eq() with some values prefilled.
+#define assert_led_bits(bits, message) assert_bits_eq(LED, bits, message, __FILE__, __func__, __LINE__)
+/// Calls assert_msg_process() with some values prefilled.
+#define assert_msg_process(is, should, message) assert_msg_process_full(is, should, message, __FILE__, __func__, __LINE__)
+
 /// Pretty prints the bits of a `uint8_t`.
 ///
 /// @param value The value to pretty print the bits of.
@@ -51,6 +56,9 @@ void println_bits(uint8_t value) {
 /// @param is The value to check.
 /// @param should The value which is expected in binary format (e.g. `1110101`).
 /// @param message Optional message to print if the assertion fails.
+/// @param file The file in which the assertion is located (filled in by the assert_led_bits macro)
+/// @param func The func in which the assertion is located (filled in by the assert_led_bits macro)
+/// @param line The line which the assertion is located on (filled in by the assert_led_bits macro)
 ///
 /// # NOTE
 /// The value in should is the decimal representation of a binary number (e.g. `110111`).
@@ -60,7 +68,7 @@ void println_bits(uint8_t value) {
 /// ```c
 /// assert_bits_eq(5, 1001, "Not equal");
 /// ```
-void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
+void assert_bits_eq(uint8_t is, uint32_t should, const char* message, const char* file, const char* func, unsigned int line) {
 	size_t number_div = 1;
 
 	for (size_t i = 0; i < UINT8_T_BITS; i++) {
@@ -73,7 +81,7 @@ void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 		}
 
 		if (is_bit != should_bit) {
-			printf("assert failed: ");
+			printf("%s:%u <%s> Assert failed: ", file, line, func);
 
 			if (message != NULL) {
 				printf("%s", message);
@@ -90,11 +98,6 @@ void assert_bits_eq(uint8_t is, uint32_t should, char* message) {
 
 		number_div *= 10;
 	}
-}
-
-/// Same as assert_bits_eq() but with the `is` parameter always set to the led register.
-void assert_led_bits(uint32_t bits, char * message) {
-	assert_bits_eq(LED, bits, message);
 }
 
 // NOTE: Do not change the order of the test cases, they build up on each other.
@@ -182,9 +185,12 @@ void print_process_error(int process_result) {
 /// @param process_result The result of the function call process_message().
 /// @param expected The expected result of the function call.
 /// @param message The message to be printed on failure.
-void assert_msg_process(int process_result, int expected, char * message) {
+/// @param file The file in which the assertion is located (filled in by the assert_msg_process macro)
+/// @param func The func in which the assertion is located (filled in by the assert_msg_process macro)
+/// @param line The line which the assertion is located on (filled in by the assert_msg_process macro)
+void assert_msg_process_full(int process_result, int expected, const char* message, const char* file, const char* func, unsigned int line) {
 	if (process_result != expected) {
-		printf("msg_assert failed: ");
+		printf("%s:%u <%s> Assert failed: ", file, line, func);
 
 		if (message != NULL) {
 			printf("%s", message);
