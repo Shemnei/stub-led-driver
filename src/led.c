@@ -12,12 +12,29 @@
  * Utilities
  */
 
+/// Replaces the bits which are masked by `mask` from `lhs` with `rhs`.
 ///
+/// This will zero out the bits indicated by the mask and them replace them
+/// with the ones from rhs.
+///
+/// @param lhs Value to set bits to.
+/// @param rhs Value to set bits from.
+/// @param mask Bit mask to indicate which bits to set.
+///
+/// @return The new value with the corresponding bits set.
 uint8_t set_bits(uint8_t lhs, uint8_t rhs, uint8_t mask) {
 	// First clear needed bits, then set them according to state.
 	return (lhs & ~mask) | (rhs & mask);
 }
 
+/// Sets the specified bits of the led register.
+/// See set_bits() for more information.
+///
+/// # NOTE
+/// This is the same as calling:
+/// ```c
+/// LED = set_bits(LED, rhs, mask);
+/// ```
 void set_led_bits(uint8_t rhs, uint8_t mask) {
 	LED = set_bits(LED, rhs, mask);
 }
